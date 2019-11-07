@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import models
 import targeting
 import json
+import csv
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -38,6 +39,11 @@ class basedRecommendationList(Resource):
         top_10_pred = targeting.recommendation_base(shop)
         return {"recommendations": top_10_pred}
 
+@api.route('/save/influencer/')
+class saveData(Resource):
+    def get(self):
+        influencers = models.Channel.query.all()
+        return {"test": len(influencers)}
 
 if __name__ == "__main__":
     app.run(debug=True)

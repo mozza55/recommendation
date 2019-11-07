@@ -5,6 +5,7 @@ import numpy as np
 import models
 import json
 
+
 with open('config.json', 'r') as f:
     config = json.load(f)
 
@@ -83,5 +84,4 @@ def recommendation_base(shop):
         top_10_pred.append(prediction[i][0])
     #print(top_10_pred)
     return top_10_pred
-
 
