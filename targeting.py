@@ -1,9 +1,12 @@
 import pandas as pd
 import requests
-import json
 import math
 import numpy as np
 import models
+import json
+
+with open('config.json', 'r') as f:
+    config = json.load(f)
 
 area = pd.read_csv('./data/area.csv',index_col='area_code')
 population = pd.read_csv('./data/population_rating.csv',index_col='area_code')
@@ -12,7 +15,7 @@ influencers = pd.read_csv('./data/influencer.csv',index_col= 'channel_id')
 def findArea(shop,addr):
     print("도착 ",addr)
     headers = {
-        'Authorization': 'key!',
+        'Authorization': config['KAKAOKEY'],
     }
     data = {
         'query' : addr
@@ -74,9 +77,11 @@ def recommendation_base(shop):
         # df.loc[idx] = [i, rating]
         # idx = idx+1
     prediction = sorted(prediction,key=lambda x:x[1], reverse=True)
-    top_10_pred = prediction[:10]
+    #print(prediction[:10])
+    top_10_pred = []
     for i in range(10):
-        print(top_10_pred[i][0]," : ",top_10_pred[i][1])
-    return prediction
+        top_10_pred.append(prediction[i][0])
+    #print(top_10_pred)
+    return top_10_pred
 
 

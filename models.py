@@ -63,10 +63,12 @@ class Channel(db.Model):
     category_id = db.Column(db.Integer, nullable=False)
     rating = db.Column(db.Float)
     cost = db.Column(db.Integer)
+    views = db.Column(db.Integer)
     ER = db.Column(db.Float)
     addr_city = db.Column(db.String(45))
     addr_gu = db.Column(db.String(45))
     addr_dong = db.Column(db.String(45))
+    h_code = db.Column(db.Integer)
     brod_type = db.Column(db.String(45))
     banner_img = db.Column(db.String(500))
     representVideo = db.Column(db.Integer)
@@ -181,6 +183,17 @@ class MessengerText(db.Model):
     del_at = db.Column(db.DateTime)
 
 
+class NoticeBoard(db.Model):
+    __tablename__ = 'noticeBoard'
+
+    id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String(45), nullable=False)
+    description = db.Column(db.String(500), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    category = db.Column(db.Integer, nullable=False)
+    shop_id = db.Column(db.Integer, nullable=False)
+
+
 class Order(db.Model):
     __tablename__ = 'order'
 
@@ -249,6 +262,8 @@ class Shop(db.Model):
     category_id = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text)
     area_code = db.Column(db.Integer)
+    profile_img = db.Column(db.String(500))
+    banner_img = db.Column(db.String(500))
     target_w = db.Column(db.Float)
     target_m = db.Column(db.Float)
     target_10 = db.Column(db.Float)
