@@ -60,16 +60,19 @@ class basedRecommendationList(Resource):
 @api.route('/save/influencer/')
 class saveData(Resource):
     def get(self):
-        #fields= ['ch_id','name','follower_num','category_id','cost','views','addr_city','addr_gu','addr_dong','h_code','target_m','target_w','target_10','target_20','target_30','target_40','target_50','target_60']
-        #channels = models.Channel.query.options(load_only(*fields))
+        # 방법 1
+        fields= ['ch_id','name','follower_num','category_id','cost','views','addr_city','addr_gu','addr_dong','h_code','target_m','target_w','target_10','target_20','target_30','target_40','target_50','target_60']
+        channels = models.Channel.query.options(load_only(*fields))
+        # 방법 2
         #channels = models.Channel.query.with_entities(models.Channel.ch_id, models.Channel.name,models.Channel.follower_num, models.Channel.cost,models.Channel.views,
-        #                                              models.Channel.addr_city, models.Channel.addr_gu, models.Channel.addr_dong,models.Channel.h_code,
-        #                                             models.Channel.target_m, models.Channel.target_w, models.Channel.target_10)
-        channels = models.Channel.query
+        #                                             models.Channel.addr_city, models.Channel.addr_gu, models.Channel.addr_dong,models.Channel.h_code,
+        #                                            models.Channel.target_m, models.Channel.target_w, models.Channel.target_10)
+
         # all()이 붙지않아서 실행은 안됨
-        influencers = pd.read_sql(channels.statement, channels.session.bind) #실제 쿼리가 실행됨
-        influencers.to_csv("./data/influencer2.csv",index=False)
-        targeting.test2()
+        df = pd.read_sql(channels.statement, channels.session.bind) #실제 쿼리가 실행됨
+        print(df)
+        df.to_csv("./data/channel.csv",index=False)
+        targeting.reloadChannel()
         return {"test": "테스트"}
 
 if __name__ == "__main__":

@@ -9,9 +9,10 @@ import json
 with open('config.json', 'r') as f:
     config = json.load(f)
 
+# 얘네 클래스화 시켜야함
 area = pd.read_csv('./data/area.csv',index_col='area_code')
 population = pd.read_csv('./data/population_rating.csv',index_col='area_code')
-influencers = pd.read_csv('./data/influencer.csv',index_col= 'channel_id')
+influencers = pd.read_csv('./data/channel.csv',index_col= 'ch_id')
 
 def findHcode(addr):
     headers = {
@@ -69,9 +70,9 @@ def recommendation_base(shop):
         if int(shop.category_id / 100000) == int(influencers.loc[idx]['category_id'] / 100000):
             rating = rating + 3
         # 지역
-        if int(shop.h_code/100000000)== int(influencers.loc[idx]['addr_code'] / 100000000):
+        if int(shop.h_code/100000000)== int(influencers.loc[idx]['h_code'] / 100000000):
             rating = rating + 2
-            if int(shop.h_code / 100000) == int(influencers.loc[idx]['addr_code'] / 100000):
+            if int(shop.h_code / 100000) == int(influencers.loc[idx]['h_code'] / 100000):
                 rating = rating + 1
 
             # 성별
@@ -98,8 +99,8 @@ def recommendation_base(shop):
     return top_10_pred
 
 
-def test2():
-    df = pd.read_csv('./data/influencer2.csv')
-    print(df)
+def reloadChannel():
+    #전역변수 처리 해야함
+    influencers = pd.read_csv('./data/channel.csv',index_col= 'ch_id')
     return
 
