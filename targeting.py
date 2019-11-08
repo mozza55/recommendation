@@ -13,6 +13,18 @@ area = pd.read_csv('./data/area.csv',index_col='area_code')
 population = pd.read_csv('./data/population_rating.csv',index_col='area_code')
 influencers = pd.read_csv('./data/influencer.csv',index_col= 'channel_id')
 
+def findHcode(addr):
+    headers = {
+        'Authorization': config['KAKAOKEY'],
+    }
+    data = {
+        'query' : addr
+    }
+    response = requests.get('https://dapi.kakao.com/v2/local/search/address.json', headers=headers, data=data)
+    j = json.loads(response.text)
+    h_code = j.get("documents")[0].get("address").get('h_code')
+    return h_code
+
 def findArea(shop,addr):
     print("도착 ",addr)
     headers = {
@@ -84,4 +96,10 @@ def recommendation_base(shop):
         top_10_pred.append(prediction[i][0])
     #print(top_10_pred)
     return top_10_pred
+
+
+def test2():
+    df = pd.read_csv('./data/influencer2.csv')
+    print(df)
+    return
 
