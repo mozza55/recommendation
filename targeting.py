@@ -4,7 +4,7 @@ import math
 import numpy as np
 import models
 import json
-
+from recommend import recommendation
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -13,7 +13,7 @@ with open('config.json', 'r') as f:
 area = pd.read_csv('./data/area.csv',index_col='area_code')
 population = pd.read_csv('./data/population_rating.csv',index_col='area_code')
 influencers = pd.read_csv('./data/channel.csv',index_col= 'ch_id')
-
+recommendation =recommendation()
 def findHcode(addr):
     headers = {
         'Authorization': config['KAKAOKEY'],
@@ -36,6 +36,7 @@ def findArea(shop,addr):
     }
     response = requests.get('https://dapi.kakao.com/v2/local/search/address.json', headers=headers, data=data)
     j = json.loads(response.text)
+    print(j)
     WGS_y = j.get("documents")[0].get("road_address").get('y')
     WGS_x = j.get("documents")[0].get("road_address").get('x')
     h_code = j.get("documents")[0].get("address").get('h_code')
@@ -98,9 +99,13 @@ def recommendation_base(shop):
     #print(top_10_pred)
     return top_10_pred
 
+def recommendation_similar(channel):
+    #print(recommendation.getSimialrChannel(channel.ch_id))
+    return recommendation.getSimialrChannel()[channel.ch_id].tolist()
 
 def reloadChannel():
     #전역변수 처리 해야함
     influencers = pd.read_csv('./data/channel.csv',index_col= 'ch_id')
     return
+
 
