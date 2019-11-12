@@ -1,5 +1,3 @@
-"""Hello Analytics Reporting API V4."""
-
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd

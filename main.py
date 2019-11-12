@@ -7,6 +7,8 @@ import json
 import csv
 import pandas as pd
 from sqlalchemy.orm import load_only
+import recommendToshop
+import gaReportToRating as ga
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -16,7 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = config['DB_URI']
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 models.db.init_app(app)
-
+recommendToshop = recommendToshop.recommendation()
 api = Api(app, version='1.0', title='Recommendation API',
           description='DNBN recommendation service',
           )
@@ -47,28 +49,28 @@ class setTargetForStore(Resource):
         models.db.session.commit()
         return {"message": "channel h_code update"}
 
-#가게 기본정보를 바탕으로 인플루언서 추천
+#추천 : 가게 기본정보를 바탕으로 인플루언서 추천
 @api.route('/recommend/info-based/<provider_user_id>')
 class basedRecommendationList(Resource):
     @api.doc('get')
     def get(self,provider_user_id):
         shop = models.Shop.query.filter_by(provider_user_id =provider_user_id).first()
-        top_10_pred = targeting.recommendation_base(shop)
+        top_10_pred = recommendToshop.recomm_base(shop)
         return {"recommendations": top_10_pred}
 
 
-# 유사 인플루언서 추천
+#추천 : 유사 인플루언서 추천
 @api.route('/recommend/similar-influencer/<ch_id>')
 class similarRecommendationList(Resource):
     @api.doc('get')
     def get(self, ch_id):
         channel = models.Channel.query.filter_by(ch_id =ch_id).first()
-        top_10_pred = targeting.recommendation_similar(channel)
+        top_10_pred = recommendToshop.getSimialrChannel(channel)
         return {"recommendations":top_10_pred}
 
 
 #DB 조회해서 기준 인플루언서 목록 업데이트 (전체 인플루언서를 읽어옴)
-@api.route('/save/recommendation-data/channel')
+@api.route('/set/recommendation-data/channel')
 class saveRecommendation(Resource):
     def get(self):
         # 방법 1
@@ -82,9 +84,14 @@ class saveRecommendation(Resource):
         # all()이 붙지않아서 실행은 안됨
         df = pd.read_sql(channels.statement, channels.session.bind) #실제 쿼리가 실행됨
         df.to_csv("./data/channel.csv",index=False)
-        targeting.reloadChannel()
+        recommendToshop.reloadChannel()
         return {"test": "테스트"}
 
+@api.route('/set/recommendation-data/rating/weblog')
+class saveWeblogRating(Resource):
+    def put(self):
+        ga.update_logRating()
+        return {"update": "WebLog Rating 저장"}
 
 
 if __name__ == "__main__":

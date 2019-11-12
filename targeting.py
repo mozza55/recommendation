@@ -1,19 +1,15 @@
 import pandas as pd
 import requests
 import math
-import numpy as np
-import models
 import json
-from recommend import recommendation
 
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-# 얘네 클래스화 시켜야함
 area = pd.read_csv('./data/area.csv',index_col='area_code')
 population = pd.read_csv('./data/population_rating.csv',index_col='area_code')
 influencers = pd.read_csv('./data/channel.csv',index_col= 'ch_id')
-recommendation =recommendation()
+
 def findHcode(addr):
     headers = {
         'Authorization': config['KAKAOKEY'],
@@ -60,52 +56,4 @@ def findArea(shop,addr):
     shop.target_50 = population.loc[index,'age50']
     shop.target_60 = population.loc[index,'age60']
     return 'sucess'
-
-
-def recommendation_base(shop):
-    prediction = []
-    ageRate = population.loc[shop.area_code, ['m','fm','age10','age20','age30','age40','age50','age60']].values
-    for idx in influencers.index:
-        rating =0
-        #카테고리 비교
-        if int(shop.category_id / 100000) == int(influencers.loc[idx]['category_id'] / 100000):
-            rating = rating + 3
-        # 지역
-        if int(shop.h_code/100000000)== int(influencers.loc[idx]['h_code'] / 100000000):
-            rating = rating + 2
-            if int(shop.h_code / 100000) == int(influencers.loc[idx]['h_code'] / 100000):
-                rating = rating + 1
-
-            # 성별
-        gender = 1 - math.pow(population.loc[shop.area_code]['m'] - influencers.loc[idx]['target_m'],
-                              2) / 10000
-        rating = rating + gender * 2
-
-        # 연령
-        age2 = influencers.loc[
-            idx, ['target_m', 'target_w', 'target_10', 'target_20', 'target_30', 'target_40', 'target_50',
-                'target_60']].values
-        # 코사인유사도
-        age = np.dot(ageRate, age2) / (np.linalg.norm(ageRate) * np.linalg.norm(age2))
-        rating = rating + 2 * age
-        prediction.append((idx, rating))
-        # df.loc[idx] = [i, rating]
-        # idx = idx+1
-    prediction = sorted(prediction,key=lambda x:x[1], reverse=True)
-    #print(prediction[:10])
-    top_10_pred = []
-    for i in range(10):
-        top_10_pred.append(prediction[i][0])
-    #print(top_10_pred)
-    return top_10_pred
-
-def recommendation_similar(channel):
-    #print(recommendation.getSimialrChannel(channel.ch_id))
-    return recommendation.getSimialrChannel()[channel.ch_id].tolist()
-
-def reloadChannel():
-    #전역변수 처리 해야함
-    influencers = pd.read_csv('./data/channel.csv',index_col= 'ch_id')
-    return
-
 
