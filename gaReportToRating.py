@@ -49,12 +49,12 @@ def get_report(analytics):
   ).execute()
 
 
-def print_response(response):
+def return_response_toDataFrame(response):
   """Parses and prints the Analytics Reporting API V4 response.
   Args:
     response: An Analytics Reporting API V4 response.
   """
-  df = pd.DataFrame(columns=['shop_id','category','action','label','cnt'])
+  weblog = pd.DataFrame(columns=['shop_id','category','action','label','count'])
   cnt =0
   for report in response.get('reports', []):
     columnHeader = report.get('columnHeader', {})
@@ -67,7 +67,7 @@ def print_response(response):
       #t = dateRangeValues[0].keys()
       #print(dateRangeValues[0]['values'][0])
       #df.loc[cnt] = [dimensions[0],dimensions[1],dimensions[2],dimensions[3]]
-      df.loc[cnt] = [dimensions[0],dimensions[1],dimensions[2],dimensions[3],dateRangeValues[0]['values'][0]]
+      weblog.loc[cnt] = [dimensions[0],dimensions[1],dimensions[2],dimensions[3],dateRangeValues[0]['values'][0]]
       cnt +=1
       """
       for header, dimension in zip(dimensionHeaders, dimensions):
@@ -77,12 +77,44 @@ def print_response(response):
         for metricHeader, value in zip(metricHeaders, values.get('values')):
           print(metricHeader.get('name') + ': ' + value)
       """
-  print(df)
+  return weblog
 
-def main():
+def calculatgeLogRating(weblog):
+  ratings = pd.DataFrame(columns=['shop_id','ch_id','rating'])
+  cnt = 0
+  for idx in weblog.index:
+    try:
+      ch_id= int(weblog.loc[idx,'label'])
+    except ValueError:
+      #print(weblog.loc[idx,'label'])
+      continue
+    ratings.loc[cnt,'ch_id'] = ch_id
+    ratings.loc[cnt, 'shop_id'] = weblog.loc[idx,'shop_id']
+
+    action = weblog.loc[idx,'action']
+    if action == 'Contact icon Click':
+      ratings.loc[cnt, 'rating'] =  2* float(weblog.loc[idx,'count'])
+      if ratings.loc[cnt, 'rating'] > 3.5:
+        ratings.loc[cnt, 'rating']=3.5
+    elif action == 'Contract icon Click':
+      ratings.loc[cnt, 'rating'] = 2 * float(weblog.loc[idx,'count'])
+      if ratings.loc[cnt, 'rating'] > 3.5:
+        ratings.loc[cnt, 'rating']=3.5
+    elif action == 'View Details Click':
+      ratings.loc[cnt, 'rating'] = 0.2 * float(weblog.loc[idx,'count'])
+      if ratings.loc[cnt, 'rating'] > 2:
+        ratings.loc[cnt, 'rating']=3
+    cnt +=1
+  ratings = ratings.groupby(['shop_id','ch_id'], as_index = False)['rating'].sum()
+  #print(ratings)
+  ratings.to_csv('./data/logRatings.csv',index=False)
+
+
+def update_logRating():
   analytics = initialize_analyticsreporting()
   response = get_report(analytics)
-  print_response(response)
+  log = return_response_toDataFrame(response)
+  calculatgeLogRating(log)
 
 if __name__ == '__main__':
-  main()
+  update_logRating()
