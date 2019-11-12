@@ -25,8 +25,8 @@ api = Api(app, version='1.0', title='Recommendation API',
 @api.route('/set/shop-target/<provider_user_id>')
 class setShopTarget(Resource):
     @api.doc('post')
-    def post(self, user_id):
-        shop = models.Shop.query.filter_by(provider_user_id =user_id).first()
+    def post(self, provider_user_id):
+        shop = models.Shop.query.filter_by(provider_user_id =provider_user_id).first()
         # + 로 문자열 append 하는 거 수정해야함
         addr = shop.addr_city +" " + shop.addr_gu + " " + shop.addr_dong +" " +shop.addr_detail
         targeting.findArea(shop,addr)
@@ -51,8 +51,8 @@ class setTargetForStore(Resource):
 @api.route('/recommend/info-based/<provider_user_id>')
 class basedRecommendationList(Resource):
     @api.doc('get')
-    def get(self,user_id):
-        shop = models.Shop.query.filter_by(provider_user_id =user_id).first()
+    def get(self,provider_user_id):
+        shop = models.Shop.query.filter_by(provider_user_id =provider_user_id).first()
         top_10_pred = targeting.recommendation_base(shop)
         return {"recommendations": top_10_pred}
 
