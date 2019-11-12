@@ -60,6 +60,11 @@ class recommendation:
         total_channels = self.channels.index.tolist()
         return total_channels
 
-r = recommendation()
-r.setCFItemBased()
-r.getCFItemBased(3)
+
+def main():
+    r = recommendation()
+    r.setCFItemBased()
+    r.getCFItemBased(3)
+
+if __name__ == '__main__':
+  main()
