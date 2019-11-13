@@ -21,6 +21,7 @@ class recommendation:
     def __init__(self):
         self.setSimialrChannel()
         self.setCandidateChannelList()
+        self.setCFItemBased()
 
     # 유사한 채널 목록 리턴
     def getSimialrChannel(self,channel):
@@ -51,7 +52,7 @@ class recommendation:
 
     # rating을 이용해 추천
     def recomm_channel(self,algo,shop_id, top_n =10):
-        predictions =[algo.predict(channel_id,shop_id)for channel_id in self.channelList ]
+        predictions =[algo.predict(channel_id,int(shop_id))for channel_id in self.channelList ]
         def sortkey_est(pred):
             return pred.est
         predictions.sort(key=sortkey_est, reverse=True)
@@ -82,6 +83,8 @@ class recommendation:
             # 카테고리 비교
             if int(shop.category_id / 100000) == int(self.channels.loc[idx]['category_id'] / 100000):
                 rating = rating + 3
+            elif self.channels.loc[idx]['category_id'] == 800000:
+                rating = rating +2
             # 지역
             if int(shop.h_code / 100000000) == int(self.channels.loc[idx]['h_code'] / 100000000):
                 rating = rating + 2

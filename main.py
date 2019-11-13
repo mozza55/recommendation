@@ -58,6 +58,13 @@ class basedRecommendationList(Resource):
         top_10_pred = recommendToshop.recomm_base(shop)
         return {"recommendations": top_10_pred}
 
+#추천 : rating 데이터 만들어진 CF 알고리즘을 통해 인플루언서 추천
+@api.route('/recommend/cf-channelbased/<provider_user_id>')
+class cfRecommendationList(Resource):
+    @api.doc('get')
+    def get(self,provider_user_id):
+        top_10_pred = recommendToshop.getCFItemBased(provider_user_id)
+        return {"recommendations": top_10_pred}
 
 #추천 : 유사 인플루언서 추천
 @api.route('/recommend/similar-influencer/<ch_id>')
