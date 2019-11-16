@@ -3,6 +3,7 @@ import numpy as np
 import math
 from surprise import SVD
 from surprise import KNNBasic
+from surprise.model_selection import GridSearchCV
 from surprise import Dataset
 from surprise import accuracy
 from surprise.model_selection import train_test_split
@@ -11,6 +12,7 @@ from surprise.dataset import DatasetAutoFolds
 from surprise import dump
 from surprise.prediction_algorithms.predictions import Prediction
 from sklearn.metrics.pairwise import cosine_similarity
+from surprise.model_selection import cross_validate
 
 class recommendation:
     channels= pd.read_csv('./data/channel.csv', index_col='ch_id')
@@ -41,9 +43,25 @@ class recommendation:
         reader = Reader(line_format ='item user rating', sep=',',rating_scale=(1,5))
         data_folds = Dataset.load_from_df(self.ratings[['shop_id', 'ch_id','rating']], reader)
         trainset = data_folds.build_full_trainset()
-        algo = KNNBasic()
+        algo = SVD(n_factors=50,n_epochs=20)
         algo.fit(trainset)
         dump.dump('./model/cf_itembase_ForShop.py',algo=algo)
+        #cross_validate(algo, data_folds, measures=['RMSE', 'MAE'], cv=5, verbose=True)
+
+        """
+        #하이퍼 파라미터 튜닝
+        # 최적화할 파라미터들을 딕셔너리 형태로 지정.
+        param_grid = {'n_epochs': [20, 40, 60], 'n_factors': [50, 100, 200]}
+
+        # CV를 3개 폴드 세트로 지정, 성능 평가는 rmse, mse 로 수행 하도록 GridSearchCV 구성
+        gs = GridSearchCV(SVD, param_grid, measures=['rmse', 'mae'], cv=3)
+        gs.fit(data_folds)
+
+        # 최고 RMSE Evaluation 점수와 그때의 하이퍼 파라미터
+        print(gs.cv_results)
+        print(gs.best_score['rmse'])
+        print(gs.best_params['rmse'])
+        """
 
     # CF - itemBase 로 채널 추천
     def getCFItemBased(self,shop_id):
@@ -121,7 +139,7 @@ class recommendation:
 
 def main():
     r = recommendation()
-    r.setCFItemBased()
+    #r.setCFItemBased()
     r.getCFItemBased(3)
 
 if __name__ == '__main__':
