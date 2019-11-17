@@ -107,6 +107,14 @@ sudo systemctl restart nginx
 `targeting.py` | 상권 분석을 통해 DB내의 컬럼 업데이트 
 `gaReportToRating.py` | GA reporting API를 통해 데이터를 내려받고 처리하는 코드
 
-### gaReportToRating.py ###
-
-### recommendToshop.py ###
+### 주요 코드
+#### gaReportToRating.py 
+GA에 받아온 데이터를 pandas로 정제한 뒤 각 항목에 대해 가중치를 매기고 평점을 구한다  
+<img src="./data/images/code_lograting.png?raw=true" alt="code_lograting.png"></img> 
+#### recommendToshop.py
+소상공인과 인플루언서의 기본 정보(카테고리(업종), 지역, 타켓 대상의 연령과 성별)를 비교하여 평점을 구한다
+<img src="./data/images/code_base.png?raw=true" alt="code_base.png"></img>
+log를 rating화 시킨 데이터를 itembased CF를 이용해 추천 리스트를 생성한다.
+<img src="./data/images/code_CF.png?raw=true" alt="code_CF.png"></img>
+인플루언서 채널의 유사도릉 
+<img src="./data/images/code_similar.png?raw=true" alt="code_similar.png"></img> 
