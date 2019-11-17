@@ -32,9 +32,12 @@ http://15.164.16.139:5000/
 <img src="./data/images/swagger.png?raw=true" alt="swagger.png"></img>
 
 ## Preview
-
-
-
+### 웹 : 소상공인의 기본 정보(업종, 위치, 상권 정보)로 적합한 인플루언서 추천
+<img src="./data/images/preview_recommend_default.png?raw=true" alt="preview_recommend_default.png"></img>
+#### 기본정보에 대한 API 요청에 따른 채널 id 리스트
+<img src="./data/images/preview_swagger1.png?raw=true" alt="preview_swagger1.png"></img>
+#### 로그 rating에 대한 API 요청에 따른 채널 id 리스트
+<img src="./data/images/preview_swagger2.png?raw=true" alt="preview_swagger2.png"></img>
 
 ## How to set up Nginx - uWSGI - Flask
 ### 1. Create WSGI entry point   
@@ -104,4 +107,6 @@ sudo systemctl restart nginx
 `targeting.py` | 상권 분석을 통해 DB내의 컬럼 업데이트 
 `gaReportToRating.py` | GA reporting API를 통해 데이터를 내려받고 처리하는 코드
 
-## Issue
+### gaReportToRating.py ###
+
+### recommendToshop.py ###
