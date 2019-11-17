@@ -29,3 +29,54 @@
 
 ## API spec swagger로 제공 
 http://15.164.16.139:5000/
+<img src="./data/image/swagger.png?raw=true" alt="swagger.png"></img>
+
+## How to set up Nginx - uWSGI - Flask
+### 1. Create uWSGI configuration file     
+프로젝트 디렉토리 내의 uwsgi.ini 파일 
+### 2. Create system file
+~~~shell
+sudo nano /etc/systemd/system/{서비스명}.service
+~~~  
+~~~txt
+  [Unit]
+  Description=uWSGI Instance to server recommender #설명
+  After=network.target
+
+  [Service]
+  User=ubuntu #user 명
+  Guorp=www-data
+  WorkingDirectory=/home/ubuntu/recommendation #어플리케이션 디렉토리
+  Environment="PATH=/home/ubuntu/anaconda3/bin" #가상환경 디렉토리
+  ExecStart=/home/ubuntu/anaconda3/bin/uwsgi --ini uwsgi.ini 
+            # {uwsgi 디렉토리 (콘다로 설치한 uwsgi)} --ini {ini 파일명}
+
+  [Install]
+  WantedBy=multi-user.target
+~~~
+### 3. Configure Nginx
+~~~Bash
+sudo nano etc/nginx/sites-available/{블럭명}
+~~~  
+~~~txt
+  server{
+    listen 8000;
+    server_name {ip addr}; #ec2 인스턴스 ip
+    location / {
+      include uwsgi_params;
+      uwsgi_pass unix:/home/ubuntu/recommendation/recommender.sock;
+                      # .ini에 지정한 sock 파일 루트
+    }
+  }
+~~~
+#### link 연결로 서버 블록 설정 활성화 
+~~~Bash
+sudo ln -s /etc/nginx/sites-available/{블럭명} /etc/nginx/sites-enabled/
+~~~  
+### 4. 동작
+~~~Bash
+sudo systemctl start {서비스명} #단계 2에서 생성한 서비스
+sudo systemctl restart nginx 
+~~~
+
+## Source 
