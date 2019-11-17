@@ -22,12 +22,12 @@ recommendToshop = recommendToshop.recommendation()
 api = Api(app, version='1.0', title='Recommendation API',
           description='DNBN recommendation service',
           )
-
+recomm = api.namespace('recommend',description='추천 리스트를 전달')
 #가게 위치 정보로 상권 분석으로 타겟 분류
 @api.route('/set/shop-target/<provider_user_id>')
 class setShopTarget(Resource):
     @api.doc('post')
-    def post(self, provider_user_id):
+    def put(self, provider_user_id):
         shop = models.Shop.query.filter_by(provider_user_id =provider_user_id).first()
         # + 로 문자열 append 하는 거 수정해야함
         addr = shop.addr_city +" " + shop.addr_gu + " " + shop.addr_dong +" " +shop.addr_detail
@@ -50,27 +50,36 @@ class setTargetForStore(Resource):
         return {"message": "channel h_code update"}
 
 #추천 : 가게 기본정보를 바탕으로 인플루언서 추천
-@api.route('/recommend/info-based/<provider_user_id>')
+#@api.route('/recommend/info-based/<provider_user_id>')
+@recomm.route('/info-based/<provider_user_id>')
+@recomm.param('provider_user_id','shop의 provider user id를 입력해주세요')
 class basedRecommendationList(Resource):
     @api.doc('get')
     def get(self,provider_user_id):
+        '''가게의 user id를 입력하면 상권 분석을 통해 만들어진 추천 채널 id 리스트를 생성'''
         shop = models.Shop.query.filter_by(provider_user_id =provider_user_id).first()
         top_10_pred = recommendToshop.recomm_base(shop)
         return {"recommendations": top_10_pred}
 
 #추천 : rating 데이터 만들어진 CF 알고리즘을 통해 인플루언서 추천
-@api.route('/recommend/cf-channelbased/<provider_user_id>')
+#@api.route('/recommend/cf-channelbased/<provider_user_id>')
+@recomm.route('/cf-channelbased/<provider_user_id>')
+@recomm.param('provider_user_id','shop의 provider user id를 입력해주세요')
 class cfRecommendationList(Resource):
     @api.doc('get')
     def get(self,provider_user_id):
+        '''가게의 user id를 입력하면 cf로 만들어진 추천 채널 id 리스트를 생성'''
         top_10_pred = recommendToshop.getCFItemBased(provider_user_id)
         return {"recommendations": top_10_pred}
 
 #추천 : 유사 인플루언서 추천
-@api.route('/recommend/similar-influencer/<ch_id>')
+#@api.route('/recommend/similar-influencer/<ch_id>')
+@recomm.route('/similar-influencer/<ch_id>')
+@recomm.param('ch_id','channel의 id를 입력해주세요')
 class similarRecommendationList(Resource):
     @api.doc('get')
     def get(self, ch_id):
+        '''채널의 id를 입력하면 유사 채널의 id 리스트를 생성'''
         channel = models.Channel.query.filter_by(ch_id =ch_id).first()
         top_10_pred = recommendToshop.getSimialrChannel(channel)
         return {"recommendations":top_10_pred}
