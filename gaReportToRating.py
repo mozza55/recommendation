@@ -58,7 +58,6 @@ def return_response_toDataFrame(response):
     columnHeader = report.get('columnHeader', {})
     dimensionHeaders = columnHeader.get('dimensions', [])
     metricHeaders = columnHeader.get('metricHeader', {}).get('metricHeaderEntries', [])
-
     for row in report.get('data', {}).get('rows', []):
       dimensions = row.get('dimensions', [])
       dateRangeValues = row.get('metrics', [])
@@ -77,6 +76,7 @@ def return_response_toDataFrame(response):
       """
   return weblog
 
+# 로그 데이터 rating 화
 def calculatgeLogRating(weblog):
   ratings = pd.DataFrame(columns=['shop_id','ch_id','rating'])
   cnt = 0
@@ -84,7 +84,6 @@ def calculatgeLogRating(weblog):
     try:
       ch_id= int(weblog.loc[idx,'label'])
     except ValueError:
-      #print(weblog.loc[idx,'label'])
       continue
     ratings.loc[cnt,'ch_id'] = ch_id
     ratings.loc[cnt, 'shop_id'] = weblog.loc[idx,'shop_id']
@@ -104,7 +103,6 @@ def calculatgeLogRating(weblog):
         ratings.loc[cnt, 'rating']=3
     cnt +=1
   ratings = ratings.groupby(['shop_id','ch_id'], as_index = False)['rating'].sum()
-  #print(ratings)
   ratings.to_csv('./data/logRatings.csv',index=False)
 
 

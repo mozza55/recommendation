@@ -43,11 +43,9 @@ class recommendation:
         reader = Reader(line_format ='item user rating', sep=',',rating_scale=(1,5))
         data_folds = Dataset.load_from_df(self.ratings[['shop_id', 'ch_id','rating']], reader)
         trainset = data_folds.build_full_trainset()
-        algo = SVD(n_factors=50,n_epochs=20)
+        algo = SVD(n_factors=50,n_epochs=20)  # Matrix Factorization; 파라미터 튜닝 결과 최적 값으로 조정
         algo.fit(trainset)
         dump.dump('./model/cf_itembase_ForShop.py',algo=algo)
-        #cross_validate(algo, data_folds, measures=['RMSE', 'MAE'], cv=5, verbose=True)
-
         """
         #하이퍼 파라미터 튜닝
         # 최적화할 파라미터들을 딕셔너리 형태로 지정.
@@ -56,18 +54,16 @@ class recommendation:
         # CV를 3개 폴드 세트로 지정, 성능 평가는 rmse, mse 로 수행 하도록 GridSearchCV 구성
         gs = GridSearchCV(SVD, param_grid, measures=['rmse', 'mae'], cv=3)
         gs.fit(data_folds)
-
         # 최고 RMSE Evaluation 점수와 그때의 하이퍼 파라미터
         print(gs.cv_results)
         print(gs.best_score['rmse'])
-        print(gs.best_params['rmse'])
+        print(gs.best_params['rmse'])  # 결과 -> n_factors=50 & n_epochs=20 
         """
 
     # CF - itemBase 로 채널 추천
     def getCFItemBased(self,shop_id):
         pred,algo = dump.load('./model/cf_itembase_ForShop.py')
         return self.recomm_channel(algo,shop_id)
-
     # rating을 이용해 추천
     def recomm_channel(self,algo,shop_id, top_n =10):
         predictions =[algo.predict(channel_id,int(shop_id))for channel_id in self.channelList ]
@@ -76,7 +72,7 @@ class recommendation:
         predictions.sort(key=sortkey_est, reverse=True)
         top_predictions = predictions[:top_n]
         top_ch_ids = [int(pred.uid) for pred in top_predictions]
-        top_ch_rating = [pred.est for pred in top_predictions]
+        #top_ch_rating = [pred.est for pred in top_predictions]
         #top_channels = [(id, rating) for id,rating in zip(top_ch_ids,top_ch_rating)]
         top_channels = [id for id in top_ch_ids]
         print(top_channels)
