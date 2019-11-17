@@ -31,6 +31,11 @@
 http://15.164.16.139:5000/  
 <img src="./data/images/swagger.png?raw=true" alt="swagger.png"></img>
 
+## Preview
+
+
+
+
 ## How to set up Nginx - uWSGI - Flask
 ### 1. Create WSGI entry point   
 프로젝트 디렉토리 내의 wsgi.py
@@ -89,13 +94,14 @@ sudo systemctl restart nginx
 ## Source 
 <img src="./data/images/directory.png?raw=true" alt="directory.png"></img>    
 #### 쥬피터 노트는 개발 전 실습 
-**wsgi.py**  wsgi entry point
-**main.py**  Flask api  
-**models.py**  flask orm으로 생성한 DB 모델들  
-**recommendToshop.py**  추천 알고리즘 구현 코드  
-**report.py**  채널 페이지에 리포트 내용 전달 코드
-**targeting.py**  상권 분석을 통해 DB내의 컬럼 업데이트 
-**gaReportToRating.py**  GA reporting API를 통해 데이터를 내려받고 처리하는 코드
+파일 | 내용 
+---|:---:
+`wsgi.py` | wsgi entry point
+`main.py` | Flask api 
+`models.py` | flask orm으로 생성한 DB 모델들 
+`recommendToshop.py` | 추천 알고리즘 구현 코드 
+`report.py` | 채널 페이지에 리포트 내용 전달 코드
+`targeting.py` | 상권 분석을 통해 DB내의 컬럼 업데이트 
+`gaReportToRating.py` | GA reporting API를 통해 데이터를 내려받고 처리하는 코드
 
-
-
+## Issue
