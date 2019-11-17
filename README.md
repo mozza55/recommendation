@@ -25,3 +25,7 @@
 
 ## system architecture
 <img src="./data/image/system_architecture.png?raw=true" alt="system_architecture.png"></img>
+
+
+## API spec swagger로 제공 
+http://15.164.16.139:5000/
