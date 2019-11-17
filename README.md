@@ -24,4 +24,4 @@
 - google-api-python-client
 
 ## system architecture
-<img src="/mozza55/recommendation/blob/master/data/image/system_architecture.png?raw=true" alt="system_architecture.png"></img>
+<img src="./data/image/system_architecture.png?raw=true" alt="system_architecture.png"></img>
