@@ -36,7 +36,7 @@ def get_report(analytics):
         'reportRequests': [
         {
           'viewId': VIEW_ID,
-          'dateRanges': [{'startDate': '1daysAgo', 'endDate': 'today'}],
+          'dateRanges': [{'startDate': '6daysAgo', 'endDate': 'today'}],
           'metrics': [{'expression': 'ga:totalEvents'}],
           'dimensions': [{'name': 'ga:dimension1'},
                          {"name": "ga:eventCategory"},
@@ -74,6 +74,7 @@ def return_response_toDataFrame(response):
         for metricHeader, value in zip(metricHeaders, values.get('values')):
           print(metricHeader.get('name') + ': ' + value)
       """
+  print(weblog)
   return weblog
 
 # 로그 데이터 rating 화
@@ -104,6 +105,7 @@ def calculatgeLogRating(weblog):
     cnt +=1
   ratings = ratings.groupby(['shop_id','ch_id'], as_index = False)['rating'].sum()
   ratings.to_csv('./data/logRatings.csv',index=False)
+  print(ratings)
 
 
 def update_logRating():
