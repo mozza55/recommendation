@@ -9,6 +9,7 @@ import pandas as pd
 from sqlalchemy.orm import load_only
 import recommendToshop
 import gaReportToRating as ga
+import channelReport
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -19,10 +20,14 @@ app.config['SQLALCHEMY_ECHO'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 models.db.init_app(app)
 recommendToshop = recommendToshop.recommendation()
+channelReport = channelReport.reporting()
 api = Api(app, version='1.0', title='Recommendation API',
           description='DNBN recommendation service',
           )
+
 recomm = api.namespace('recommend',description='추천 리스트를 전달')
+report = api.namespace('report',description ='리포트 내용 전달')
+
 #가게 위치 정보로 상권 분석으로 타겟 분류
 @api.route('/set/shop-target/<shop_id>')
 class setShopTarget(Resource):
@@ -52,7 +57,7 @@ class setTargetForStore(Resource):
 #추천 : 가게 기본정보를 바탕으로 인플루언서 추천
 #@api.route('/recommend/info-based/<provider_user_id>')
 @recomm.route('/info-based/<shop_id>')
-@recomm.param('provider_user_id','shop의 provider user id를 입력해주세요')
+@recomm.param('shop_id','shop의 shop_id를 입력해주세요')
 class basedRecommendationList(Resource):
     @api.doc('get')
     def get(self,shop_id):
@@ -64,7 +69,7 @@ class basedRecommendationList(Resource):
 #추천 : rating 데이터 만들어진 CF 알고리즘을 통해 인플루언서 추천
 #@api.route('/recommend/cf-channelbased/<provider_user_id>')
 @recomm.route('/cf-channelbased/<shop_id>')
-@recomm.param('provider_user_id','shop의 provider user id를 입력해주세요')
+@recomm.param('shop_id','shop의 shop_id를 입력해주세요')
 class cfRecommendationList(Resource):
     @api.doc('get')
     def get(self,shop_id):
@@ -84,6 +89,13 @@ class similarRecommendationList(Resource):
         top_10_pred = recommendToshop.getSimialrChannel(channel)
         return {"recommendations":top_10_pred}
 
+#리포트 : 채널 리포트 제공
+@report.route('/channel-report/<ch_id>')
+@report.param('ch_id','channel의 id를 입력해주세요')
+class specificChannelReport(Resource):
+    @api.doc('get')
+    def get(self,ch_id):
+        return channelReport.getChannelReport(int(ch_id),100000)
 
 #DB 조회해서 기준 인플루언서 목록 업데이트 (전체 인플루언서를 읽어옴)
 @api.route('/set/recommendation-data/channel')
