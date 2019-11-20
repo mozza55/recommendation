@@ -16,7 +16,7 @@ class reporting:
         cate_name =self.category_name[int(category_id/100000)]
         re = {}
         re['gender'] =[ch_info.target_w, ch_info.target_m]
-        re['age'] = [ch_info.target_10, ch_info.target_20,ch_info.target_30, ch_info.target_40,ch_info.target_50, ch_info.target_50]
+        re['age'] = [ch_info.target_10, ch_info.target_20,ch_info.target_30, ch_info.target_40,ch_info.target_50, ch_info.target_60]
         re['category'] = [cate_name]
         channel = self.report[self.report['ch_id']==ch_id]
         #데이터가 없을 경우
