@@ -90,12 +90,16 @@ class similarRecommendationList(Resource):
         return {"recommendations":top_10_pred}
 
 #리포트 : 채널 리포트 제공
-@report.route('/channel-report/<ch_id>')
+@report.route('/channel-report/<ch_id>/<shop_id>')
+@report.param('shop_id','shop의 id를 입력해주세요')
 @report.param('ch_id','channel의 id를 입력해주세요')
 class specificChannelReport(Resource):
     @api.doc('get')
-    def get(self,ch_id):
-        return channelReport.getChannelReport(int(ch_id),100000)
+    def get(self,ch_id,shop_id):
+        shop = models.Shop.query.filter_by(shop_id=shop_id).first()
+        channel = models.Channel.query.filter_by(ch_id=ch_id).first()
+        category_id = round(shop.category_id,-4)
+        return channelReport.getChannelReport(int(ch_id),channel,int(category_id))
 
 #DB 조회해서 기준 인플루언서 목록 업데이트 (전체 인플루언서를 읽어옴)
 @api.route('/set/recommendation-data/channel')
