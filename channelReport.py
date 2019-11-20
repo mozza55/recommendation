@@ -21,6 +21,7 @@ class reporting:
         channel = self.report[self.report['ch_id']==ch_id]
         #데이터가 없을 경우
         if channel.index.size ==0:
+            re['category_cnt'] = [0,0]
             re['rating'] = [0, 5]
             re['view'] = [self.avg['play_count'], 0,0]
             re['chat'] = [self.avg['chat_count'], 0,0]
