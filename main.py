@@ -91,8 +91,8 @@ class similarRecommendationList(Resource):
 
 #리포트 : 채널 리포트 제공
 @report.route('/channel-report/<ch_id>/<shop_id>')
-@report.param('shop_id','shop의 id를 입력해주세요')
 @report.param('ch_id','channel의 id를 입력해주세요')
+@report.param('shop_id','shop의 id를 입력해주세요')
 class specificChannelReport(Resource):
     @api.doc('get')
     def get(self,ch_id,shop_id):

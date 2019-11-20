@@ -21,7 +21,7 @@ class reporting:
         channel = self.report[self.report['ch_id']==ch_id]
         #데이터가 없을 경우
         if channel.index.size ==0:
-            re['rating'] = [0,5]
+            re['rating'] = [0, 5]
             re['view'] = [self.avg['play_count'], 0,0]
             re['chat'] = [self.avg['chat_count'], 0,0]
             re['buy'] = [self.avg['buy_count'], 0,0]
@@ -42,12 +42,13 @@ class reporting:
         if category_id not in ch.index:
             ch.loc[category_id] = 0
 
+        re['category_cnt'] = [int(ch.loc[category_id,"count"]), int(ch.loc[0,"count"]-ch.loc[category_id,"count"])]
         re['rating']=[round(ch.loc[0,"rating"],1),round(5-ch.loc[0,"rating"],1)]
         re['view']=[self.avg['play_count'],ch.loc[0,"play_count"],ch.loc[category_id,"play_count"]]
         re['chat']=[self.avg['chat_count'],ch.loc[0,"chat_count"],ch.loc[category_id,"chat_count"]]
         re['buy']=[self.avg['buy_count'],ch.loc[0,"buy_count"],ch.loc[category_id,"buy_count"]]
         re['er']=[round(self.avg['ER'],1),round(ch.loc[0,"ER"],1),round(ch.loc[category_id,"ER"],1)]
-        #print(re)
+        print(re)
         return re
 
 
